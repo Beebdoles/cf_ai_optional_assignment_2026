@@ -10,21 +10,26 @@
 	"migrations": [
 		{
 			"new_sqlite_classes": [
-				"MyDurableObject"
+				"UserDurableObject"
 			],
-			"tag": "v1"
+			"tag": "v1.1"
 		}
 	],
 	"assets": {
 		// The path to the directory containing the `index.html` file to be served at `/`
-		"directory": "./public"
+		"directory": "./public",
+        "binding": "ASSETS"
 	},
 	"durable_objects": {
 		"bindings": [
 			{
 				"class_name": "MyDurableObject",
 				"name": "MY_DURABLE_OBJECT"
-			}
+			},
+            {
+                "class_name": "UserDurableObject",
+                "name": "USER_DURABLE_OBJECT"
+            }
 		]
 	},
 	"observability": {

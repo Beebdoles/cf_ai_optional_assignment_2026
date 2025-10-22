@@ -39,6 +39,15 @@ export class MyDurableObject extends DurableObject {
 	}
 }
 
+export class UserDurableObject extends DurableObject {
+
+    constructor(ctx: DurableObjectState, env: Env) {
+        super(ctx, env);
+    }
+
+
+}
+
 export default {
 	/**
 	 * This is the standard fetch handler for a Cloudflare Worker
@@ -60,6 +69,23 @@ export default {
 		// the remote Durable Object instance.
 		const greeting = await stub.sayHello("world");
 
-		return new Response(greeting);
+        const url = new URL(request.url);
+        
+        if(url.pathname === "/api/chat" && request.method === "POST") {
+            const { userID, message } = await request.json();
+            
+            //get the specific user's durable object
+            const id = env.USER_DURABLE_OBJECT.idFromName(userID);
+            const obj = env.USER_DURABLE_OBJECT.get(id);
+
+            //process request
+            const response = await obj.fetch("https://internal/handle", {
+                method: "POST",
+                body: JSON.stringify({message})
+            });
+            return response;
+        }
+
+		return env.ASSETS.fetch(request);
 	},
 } satisfies ExportedHandler<Env>;
